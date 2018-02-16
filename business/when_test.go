@@ -38,7 +38,7 @@ func TestWhenEachParser(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		callback, err := WhenParser(tc.input)
+		callback, err := WhenFilter(tc.input)
 		if tc.error {
 			if err == nil {
 				t.Errorf("expected error but got nil with input:%s", tc.input)
@@ -96,7 +96,7 @@ func TestWhenTotalCounter(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		callback, err := WhenParser(tc.input)
+		callback, err := WhenFilter(tc.input)
 		if tc.error {
 			if err == nil {
 				t.Errorf("expected error but got nil with input:%s", tc.input)

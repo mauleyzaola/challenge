@@ -8,10 +8,10 @@ import (
 	"github.com/mauleyzaola/challenge/domain"
 )
 
-// Evaluates the WHEN expression and returns a callback function that returns which indexes of the slice match the WHEN rule
+// Evaluates the WHEN expression and returns a callback function that can evaluate which indexes of the slice match the WHEN rule
 //
-// It is up to the caller to decide what to do with the selected indexes
-func WhenParser(when string) (domain.WhenCallback, error) {
+// It is up to the caller to decide what to do with the matched indexes
+func WhenFilter(when string) (domain.WhenCallback, error) {
 	parseInt := func(value string) (int, error) {
 		v, err := strconv.ParseInt(value, 10, 32)
 		return int(v), err
