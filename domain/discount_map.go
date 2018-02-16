@@ -1,7 +1,7 @@
 package domain
 
 type DiscountRule struct {
-	Code, Rule, Apply string
+	Code, When, Expr string
 }
 
 // Defines which discount rules would apply to which products, currently mocked in code, but could be stored anywhere else
@@ -9,13 +9,13 @@ type DiscountRule struct {
 // The idea is that logic is driven by data
 var productDiscMap []DiscountRule = []DiscountRule{
 	{
-		Code:  "VOUCHER",
-		Rule:  "each:2",
-		Apply: "price=0",
+		Code: "VOUCHER",
+		When: "each:2",
+		Expr: "0",
 	},
 	{
-		Code:  "TSHIRT",
-		Rule:  "greater:3",
-		Apply: "price*.95",
+		Code: "TSHIRT",
+		When: "gte:3",
+		Expr: "*.95",
 	},
 }
