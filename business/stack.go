@@ -6,11 +6,11 @@ import (
 	"strings"
 )
 
-type numberStack struct {
+type stack struct {
 	items []string
 }
 
-func (this *numberStack) Reverse() string {
+func (this *stack) reverse() string {
 	result := make([]string, len(this.items))
 	for i := len(this.items) - 1; i >= 0; i-- {
 		result = append(result, this.items[i])
@@ -18,26 +18,34 @@ func (this *numberStack) Reverse() string {
 	return strings.Join(result, "")
 }
 
-func (this *numberStack) Value() string {
+func (this *stack) value() string {
 	return strings.Join(this.items, "")
 }
 
-func (this *numberStack) Float() float64 {
-	value, _ := strconv.ParseFloat(this.Value(), 64)
+func (this *stack) float() float64 {
+	value, _ := strconv.ParseFloat(this.value(), 64)
 	return value
 }
 
-func (this *numberStack) Push(value string) *numberStack {
+func (this *stack) push(value string) *stack {
 	this.items = append(this.items, value)
 	return this
 }
 
-func (this *numberStack) Pop() (string, error) {
+func (this *stack) pop() (string, error) {
 	if len(this.items) == 0 {
 		return "", fmt.Errorf("stack is empty")
 	}
 	defer func() {
-		this.items = this.items[:len(this.items)-2]
+		this.items = this.items[:len(this.items)-1]
 	}()
 	return this.items[len(this.items)-1], nil
+}
+
+func (this *stack) clear() {
+	this.items = nil
+}
+
+func (this *stack) len() int {
+	return len(this.items)
 }
