@@ -2,37 +2,42 @@ package business
 
 import (
 	"fmt"
-
-	"github.com/golang-collections/collections/stack"
+	"strings"
 )
 
 type stringStack struct {
-	_stack *stack.Stack
+	_items []string
 }
 
 func newStringStack() *stringStack {
-	return &stringStack{_stack: &stack.Stack{}}
+	return &stringStack{}
 }
 
 func (this *stringStack) Len() int {
-	return this._stack.Len()
+	return len(this._items)
 }
 
 func (this *stringStack) Pop() (string, error) {
 	if this.Len() == 0 {
 		return "", fmt.Errorf("empty stack")
 	}
-	value, _ := this._stack.Pop().(string)
-	return value, nil
+	defer func() {
+		this._items = this._items[:len(this._items)-1]
+	}()
+	return this.Top(), nil
 }
 
 func (this *stringStack) Push(value string) {
-	this._stack.Push(value)
+	this._items = append(this._items, value)
 }
 
 func (this *stringStack) Top() string {
-	if value, ok := this._stack.Peek().(string); ok {
-		return value
+	if this.Len() == 0 {
+		return ""
 	}
-	return ""
+	return this._items[len(this._items)-1]
+}
+
+func (this *stringStack) Debug() string {
+	return strings.Join(this._items, ",")
 }

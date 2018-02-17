@@ -1,14 +1,56 @@
 package business
 
-import "testing"
+import (
+	"testing"
+)
+
+func TestIsNumber(t *testing.T) {
+	cases := []struct {
+		expected bool
+		input    uint8
+	}{
+		{input: '1', expected: true},
+		{input: 'x', expected: false},
+	}
+	for _, tc := range cases {
+		result := isNumber(tc.input)
+		if result != tc.expected {
+			t.Errorf("expected:%v but got instead:%v input:%s", tc.expected, result, string(tc.input))
+		}
+	}
+}
+
+func TestIsOperator(t *testing.T) {
+	cases := []struct {
+		expected bool
+		input    uint8
+	}{
+		{input: '+', expected: true},
+		{input: '-', expected: true},
+		{input: '*', expected: true},
+		{input: '/', expected: true},
+		{input: ' ', expected: false},
+		{input: 'x', expected: false},
+	}
+	for _, tc := range cases {
+		result := isOperator(tc.input)
+		if result != tc.expected {
+			t.Errorf("expected:%v but got instead:%v input:%s", tc.expected, result, string(tc.input))
+		}
+	}
+}
 
 func TestToPostfix(t *testing.T) {
-	input := "2+5*(3+8)"
-	result := toPostfix(input)
+	input := "3+4*2/(1-5)"
+	result, err := infixToPostfix(input)
+	if err != nil {
+		t.Error(err)
+	}
 	t.Log("xxx:", result)
 }
 
 func TestEvaluate(t *testing.T) {
+	t.Skip()
 	type tcase struct {
 		input     string
 		constants map[string]float64
