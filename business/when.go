@@ -8,7 +8,7 @@ import (
 	"github.com/mauleyzaola/challenge/domain"
 )
 
-// Evaluates the WHEN expression and returns a callback function that can evaluate which indexes of the slice match the WHEN rule
+// Evaluates the WHEN expression and returns a callback function that can eval which indexes of the slice match the WHEN rule
 //
 // It is up to the caller to decide what to do with the matched indexes
 func WhenFilter(when string) (domain.WhenCallback, error) {

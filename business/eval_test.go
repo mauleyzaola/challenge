@@ -2,37 +2,10 @@ package business
 
 import "testing"
 
-func TestCompute(t *testing.T) {
-	t.Skip()
-	//type tcase struct {
-	//	inputPrice, expectedPrice float64
-	//	expr                      string
-	//	error                     bool
-	//}
-	//cases := []tcase{
-	//	{
-	//		inputPrice:    5,
-	//		expectedPrice: 0,
-	//		expr:          "0",
-	//	},
-	//}
-	//for _, tc := range cases {
-	//	fn, err := evaluate(tc.expr)
-	//	if tc.error {
-	//		if err == nil {
-	//			t.Errorf("expected error but got instead nil with expr:%s", tc.expr)
-	//		}
-	//	} else {
-	//		if err != nil {
-	//			t.Error(err)
-	//			continue
-	//		}
-	//		result := fn(tc.inputPrice)
-	//		if result != tc.expectedPrice {
-	//			t.Errorf("expected price is:%v but got instead:%v", tc.expectedPrice, result)
-	//		}
-	//	}
-	//}
+func TestToPostfix(t *testing.T) {
+	input := "2+5*(3+8)"
+	result := toPostfix(input)
+	t.Log("xxx:", result)
 }
 
 func TestEvaluate(t *testing.T) {
@@ -91,7 +64,7 @@ func TestEvaluate(t *testing.T) {
 		//},
 	}
 	for _, tc := range cases {
-		result, err := evaluate(tc.input, tc.constants)
+		result, err := eval(tc.input, tc.constants)
 		if tc.error {
 
 		} else {

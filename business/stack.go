@@ -2,50 +2,37 @@ package business
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
+
+	"github.com/golang-collections/collections/stack"
 )
 
-type stack struct {
-	items []string
+type stringStack struct {
+	_stack *stack.Stack
 }
 
-func (this *stack) reverse() string {
-	result := make([]string, len(this.items))
-	for i := len(this.items) - 1; i >= 0; i-- {
-		result = append(result, this.items[i])
+func newStringStack() *stringStack {
+	return &stringStack{_stack: &stack.Stack{}}
+}
+
+func (this *stringStack) Len() int {
+	return this._stack.Len()
+}
+
+func (this *stringStack) Pop() (string, error) {
+	if this.Len() == 0 {
+		return "", fmt.Errorf("empty stack")
 	}
-	return strings.Join(result, "")
+	value, _ := this._stack.Pop().(string)
+	return value, nil
 }
 
-func (this *stack) value() string {
-	return strings.Join(this.items, "")
+func (this *stringStack) Push(value string) {
+	this._stack.Push(value)
 }
 
-func (this *stack) float() float64 {
-	value, _ := strconv.ParseFloat(this.value(), 64)
-	return value
-}
-
-func (this *stack) push(value string) *stack {
-	this.items = append(this.items, value)
-	return this
-}
-
-func (this *stack) pop() (string, error) {
-	if len(this.items) == 0 {
-		return "", fmt.Errorf("stack is empty")
+func (this *stringStack) Top() string {
+	if value, ok := this._stack.Peek().(string); ok {
+		return value
 	}
-	defer func() {
-		this.items = this.items[:len(this.items)-1]
-	}()
-	return this.items[len(this.items)-1], nil
-}
-
-func (this *stack) clear() {
-	this.items = nil
-}
-
-func (this *stack) len() int {
-	return len(this.items)
+	return ""
 }

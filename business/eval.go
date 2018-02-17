@@ -2,7 +2,6 @@ package business
 
 import (
 	"fmt"
-	"strconv"
 )
 
 const (
@@ -19,42 +18,43 @@ var ops map[string]int = map[string]int{
 	"/": op_div,
 }
 
+func isNumber(c uint8) bool {
+	return c >= '0' && c <= '9'
+}
+
 // Many features are missing on this basic eval function, for instance operator precedence, grouping and making use of external functions is not implemented yet
-func evaluate(expr string, constants map[string]float64) (float64, error) {
-	var result float64
-	constStack, opStack, numberStack := &stack{}, &stack{}, &stack{}
-
-	for _, v := range expr {
-		value := string(v)
-		if isOperator(value) {
-			if opStack.len() != 0 {
-				return -1, fmt.Errorf("two continuous operators are not supported")
-			}
-			opStack.push(value)
-		} else if isNumber(value) {
-			numberStack.push(value)
-		} else { // assume it is part of a constant
-			constStack.push(value)
-		}
-	}
-
-	return result, nil
+func eval(expr string, constants map[string]float64) (float64, error) {
+	return -1, fmt.Errorf("not implemented yet")
 }
 
-func isNumber(value string) bool {
-	_, err := strconv.ParseFloat(value, 64)
-	return err == nil
-}
-
-func isOperator(value string) bool {
+func isOperator(value uint8) bool {
 	_, err := operator(value)
 	return err != nil
 }
 
-func operator(value string) (int, error) {
-	if val, ok := ops[value]; ok {
+func operator(value uint8) (int, error) {
+	if val, ok := ops[string(value)]; ok {
 		return val, nil
 	}
 
 	return -1, fmt.Errorf("unsupported operator:%s", value)
+}
+
+func toPostfix(s string) string {
+	return ""
+}
+
+func operatorOrder(op string) int {
+	switch op {
+	case "+":
+		fallthrough
+	case "-":
+		return 1
+	case "*":
+		fallthrough
+	case "/":
+		return 2
+	default:
+		return 0
+	}
 }
