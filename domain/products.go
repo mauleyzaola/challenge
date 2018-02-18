@@ -1,5 +1,7 @@
 package domain
 
+import "fmt"
+
 type Products []Product
 
 func (this Products) Filter(cb func(Product) bool) Products {
@@ -26,4 +28,19 @@ func (this Products) MatchIndexes(indexes map[int]bool) Products {
 		}
 	}
 	return result
+}
+
+func (this Products) ToMap() (map[string]*Product, error) {
+	result := make(map[string]*Product)
+	for i := range this {
+		v := this[i]
+		if len(v.Code) == 0 {
+			return nil, fmt.Errorf("missing code for product, cannot convert to map")
+		}
+		if _, ok := result[v.Code]; ok {
+			return nil, fmt.Errorf("found duplicated code:%s", v.Code)
+		}
+		result[v.Code] = &v
+	}
+	return result, nil
 }

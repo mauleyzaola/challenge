@@ -7,7 +7,7 @@ type DiscountRule struct {
 // Defines which discount rules would apply to which products, currently mocked in code, but could be stored anywhere else
 //
 // The idea is that logic is driven by data and code each case separately once
-var productDiscMap []DiscountRule = []DiscountRule{
+var MockedDiscountRules []DiscountRule = []DiscountRule{
 	{
 		Code:      "VOUCHER",
 		When:      "each:2",
