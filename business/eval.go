@@ -43,7 +43,7 @@ func operator(value uint8) (int, error) {
 		return val, nil
 	}
 
-	return -1, fmt.Errorf("unsupported operator:%s", value)
+	return -1, fmt.Errorf("unsupported operator:%s", string(value))
 }
 
 func sortBySize(constants StringConstants) StringConstants {

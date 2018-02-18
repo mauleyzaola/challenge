@@ -10,7 +10,7 @@ func TestStringStack_Len(t *testing.T) {
 	expected := 3
 	result := stack.len()
 	if expected != result {
-		t.Errorf("expected:%s but got instead:%s", expected, result)
+		t.Errorf("expected:%d but got instead:%d", expected, result)
 	}
 }
 
