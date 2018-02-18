@@ -25,8 +25,12 @@ func isNumber(value uint8) bool {
 	return (value >= '0' && value <= '9') || value == '.'
 }
 
-func eval(expr string, constants map[string]float64) (float64, error) {
-	return -1, fmt.Errorf("not implemented yet")
+func Eval(expr string, constants map[string]float64) (float64, error) {
+	values, err := infixToPostfix(expr, constants)
+	if err != nil {
+		return 0, err
+	}
+	return postfixCalculator(values)
 }
 
 func isOperator(value uint8) bool {
