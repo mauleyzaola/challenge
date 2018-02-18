@@ -46,7 +46,7 @@ func operator(value uint8) (int, error) {
 }
 
 // TODO implement constants as well
-func infixToPostfix(value string) (*stringStack, error) {
+func infixToPostfix(value string) ([]string, error) {
 	var curr uint8
 	mainStack := newStringStack()
 	auxStack := newStringStack()
@@ -103,7 +103,7 @@ func infixToPostfix(value string) (*stringStack, error) {
 		mainStack.push(last)
 	}
 
-	return mainStack, nil
+	return mainStack.slice(), nil
 }
 
 func operatorOrder(op string) int {
@@ -122,11 +122,11 @@ func operatorOrder(op string) int {
 }
 
 func postfixCalculator(values []string) (float64, error) {
-	mainStack := newStringStack()
+	stack := newStringStack()
 
 	doCalc := func(op string) error {
 		var result float64
-		val, err := mainStack.pop()
+		val, err := stack.pop()
 		if err != nil {
 			return err
 		}
@@ -134,7 +134,7 @@ func postfixCalculator(values []string) (float64, error) {
 		if err != nil {
 			return err
 		}
-		val, err = mainStack.pop()
+		val, err = stack.pop()
 		if err != nil {
 			return err
 		}
@@ -159,14 +159,14 @@ func postfixCalculator(values []string) (float64, error) {
 			}
 			result = number1 / number2
 		}
-		mainStack.push(formatFloat(result))
+		stack.push(formatFloat(result))
 		return nil
 	}
 
 	// at this point we assume there are only numbers and operators
 	for _, v := range values {
 		if !isOperator(v[0]) {
-			mainStack.push(v)
+			stack.push(v)
 			continue
 		}
 		if err := doCalc(v); err != nil {
@@ -174,11 +174,11 @@ func postfixCalculator(values []string) (float64, error) {
 		}
 	}
 
-	if mainStack.len() != 1 {
+	if stack.len() != 1 {
 		return 0, fmt.Errorf("invalid postfix expression:%s", strings.Join(values, ""))
 	}
 
-	return strconv.ParseFloat(mainStack.slice()[0], 64)
+	return strconv.ParseFloat(stack.slice()[0], 64)
 }
 
 func formatFloat(number float64) string {

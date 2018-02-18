@@ -8,13 +8,12 @@ import (
 )
 
 func TestWhenEachParser(t *testing.T) {
-	type tcase struct {
+	cases := []struct {
 		input    string
 		sample   []domain.Product
 		error    bool
 		expected map[int]bool
-	}
-	testCases := []tcase{
+	}{
 		{
 			input: "",
 			error: true,
@@ -37,7 +36,7 @@ func TestWhenEachParser(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range cases {
 		callback, err := WhenFilter(tc.input)
 		if tc.error {
 			if err == nil {
@@ -57,13 +56,12 @@ func TestWhenEachParser(t *testing.T) {
 }
 
 func TestWhenTotalCounter(t *testing.T) {
-	type tcase struct {
+	cases := []struct {
 		input    string
 		sample   []domain.Product
 		error    bool
 		expected map[int]bool
-	}
-	testCases := []tcase{
+	}{
 		{
 			input: "",
 			error: true,
@@ -95,7 +93,7 @@ func TestWhenTotalCounter(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range cases {
 		callback, err := WhenFilter(tc.input)
 		if tc.error {
 			if err == nil {

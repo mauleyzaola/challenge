@@ -101,7 +101,7 @@ func TestInfixToPostfix(t *testing.T) {
 		} else {
 			if err != nil {
 				t.Error(err)
-			} else if tc.expected != strings.Join(result.slice(), ",") {
+			} else if tc.expected != strings.Join(result, ",") {
 				t.Errorf("expected:%s but got instead:%s", tc.expected, result)
 			}
 		}
@@ -144,7 +144,62 @@ func TestPostfixCalculator(t *testing.T) {
 	}
 }
 
-func TestEvaluate(t *testing.T) {
+func TestCalc(t *testing.T) {
+	cases := []struct {
+		input    string
+		expected float64
+		error    bool
+	}{
+		{
+			input:    "8+2*5",
+			expected: 18,
+			error:    false,
+		},
+		{
+			input:    "4/(10/5)+100-22",
+			expected: 80,
+			error:    false,
+		},
+		{
+			input:    "20*.95",
+			expected: 19,
+			error:    false,
+		},
+		{
+			input:    "5-5",
+			expected: 0,
+			error:    false,
+		},
+		{
+			input: "4/(10/5)-+100-22",
+			error: true,
+		},
+	}
+
+	for _, tc := range cases {
+		values, err := infixToPostfix(tc.input)
+		if !tc.error && err != nil {
+			t.Errorf("expected error to be nil but got instead:%s with input:%s", err, tc.input)
+			continue
+		}
+		result, err := postfixCalculator(values)
+		if tc.error {
+			if err == nil {
+				t.Errorf("expected error but got nil instead with input:%s and postfix values:%s", tc.input, strings.Join(values, ","))
+			}
+			continue
+		}
+		if err != nil {
+			t.Errorf("expected error to be nil but got instead:%s with input:%s", err, tc.input)
+			continue
+		}
+		if result != tc.expected {
+			t.Errorf("expected:%v but got instead:%v with input:%s", tc.expected, result, tc.input)
+		}
+	}
+}
+
+func TestEval(t *testing.T) {
 	t.Skip()
 	type tcase struct {
 		input     string
