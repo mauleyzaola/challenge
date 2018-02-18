@@ -297,16 +297,16 @@ func TestEval(t *testing.T) {
 			},
 		},
 		{
-			input:     "",
-			expected:  0,
-			constants: map[string]float64{},
-			error:     true,
+			input: "",
+			error: true,
 		},
 	}
 	for _, tc := range cases {
 		result, err := Eval(tc.input, tc.constants)
 		if tc.error {
-
+			if err == nil {
+				t.Errorf("expected error but got nil instad with input:%s", tc.input)
+			}
 		} else {
 			if err != nil {
 				t.Error(err)
