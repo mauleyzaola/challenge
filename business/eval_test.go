@@ -167,12 +167,12 @@ func TestCalc(t *testing.T) {
 			error:    false,
 		},
 		{
-			input:    "4/(ten/ten5)+hundred-22+ten",
+			input:    "4/(numberTen/numberFive)+hundred-22+numberTen",
 			expected: 90,
 			constants: map[string]float64{
-				"ten":     10,
-				"hundred": 100,
-				"ten5":    5,
+				"numberTen":  10,
+				"hundred":    100,
+				"numberFive": 5,
 			},
 			error: false,
 		},
