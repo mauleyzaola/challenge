@@ -46,53 +46,48 @@ func operator(value uint8) (int, error) {
 
 func infixToPostfix(s string) (string, error) {
 	var (
-		curr   uint8
-		number string
+		curr uint8
 	)
 	mainStack := newStringStack()
 	auxStack := newStringStack()
 
-	addAndClearNumber := func() {
-		if len(number) != 0 {
-			mainStack.Push(number)
-			number = ""
-		}
-	}
-
 	for i := range s {
 		curr = s[i]
-		if isNumber(curr) {
-			number += string(curr)
-		} else if isOperator(curr) {
-			addAndClearNumber()
-			if auxStack.Len() == 0 {
-				auxStack.Push(string(curr))
-			} else {
-				if operatorOrder(string(curr)) >= operatorOrder(auxStack.Top()) {
-					auxStack.Push(string(curr))
-				} else {
-					lastOp, _ := auxStack.Pop()
-					mainStack.Push(lastOp)
-				}
-			}
-		} else if isParenthesis(curr) {
+
+		if isParenthesis(curr) {
 			if curr == '(' {
 				auxStack.Push(string(curr))
-			} else {
+			} else { // closing parenthesis
 				for auxStack.Len() != 0 {
-					lastOp, err := auxStack.Pop()
-					if err != nil {
-						return "", err
-					}
-					if lastOp == ")" {
+					oldVal, _ := auxStack.Pop()
+					if oldVal == "(" {
 						continue
-					} else if lastOp == "(" {
-						continue
-					} else {
-						mainStack.Push(lastOp)
 					}
+					if oldVal == ")" {
+						break
+					}
+					mainStack.Push(oldVal)
 				}
 			}
+		}
+
+		if isOperator(curr) {
+			if auxStack.Len() != 0 {
+				if operatorOrder(string(curr)) > operatorOrder(auxStack.Top()) {
+					auxStack.Push(string(curr))
+				} else if operatorOrder(string(curr)) == operatorOrder(auxStack.Top()) {
+					oldVal, _ := auxStack.Pop()
+					mainStack.Push(oldVal)
+					auxStack.Push(string(curr))
+				}
+			} else {
+				auxStack.Push(string(curr))
+			}
+		}
+
+		// TODO consider numbers with more than one digit
+		if isNumber(curr) {
+			mainStack.Push(string(curr))
 		}
 	}
 
@@ -101,12 +96,7 @@ func infixToPostfix(s string) (string, error) {
 		mainStack.Push(lastOp)
 	}
 
-	// debug
-	fmt.Println("input:", s)
-	fmt.Println("main stack:", mainStack.Debug())
-	fmt.Println("aux stack:", auxStack.Debug())
-
-	return "", nil
+	return mainStack.Split(), nil
 }
 
 func operatorOrder(op string) int {

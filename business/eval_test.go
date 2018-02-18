@@ -40,13 +40,49 @@ func TestIsOperator(t *testing.T) {
 	}
 }
 
-func TestToPostfix(t *testing.T) {
-	input := "3+4*2/(1-5)"
-	result, err := infixToPostfix(input)
-	if err != nil {
-		t.Error(err)
+func TestOpOrder(t *testing.T) {
+	cases := []struct {
+		op       string
+		expected int
+	}{
+		{op: "+", expected: 1},
+		{op: "-", expected: 1},
+		{op: "*", expected: 2},
+		{op: "/", expected: 2},
+		{op: "", expected: 0},
+		{op: "x", expected: 0},
 	}
-	t.Log("xxx:", result)
+	for _, tc := range cases {
+		result := operatorOrder(tc.op)
+		if result != tc.expected {
+			t.Errorf("expected:%v but got instead:%v op:%s", tc.expected, result, tc.op)
+		}
+	}
+}
+
+func TestToPostfix(t *testing.T) {
+	cases := []struct {
+		input, expected string
+		error           bool
+	}{
+		{
+			input:    "3+4*2/(1-5)",
+			expected: "3,4,2,*,1,5,-,/,+",
+			error:    false,
+		},
+	}
+	for _, tc := range cases {
+		result, err := infixToPostfix(tc.input)
+		if tc.error {
+
+		} else {
+			if err != nil {
+				t.Error(err)
+			} else if tc.expected != result {
+				t.Errorf("expected:%s but got instead:%s", tc.expected, result)
+			}
+		}
+	}
 }
 
 func TestEvaluate(t *testing.T) {

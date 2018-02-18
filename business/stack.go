@@ -38,6 +38,6 @@ func (this *stringStack) Top() string {
 	return this._items[len(this._items)-1]
 }
 
-func (this *stringStack) Debug() string {
+func (this *stringStack) Split() string {
 	return strings.Join(this._items, ",")
 }
