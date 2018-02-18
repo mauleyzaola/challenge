@@ -199,6 +199,24 @@ func TestCalc(t *testing.T) {
 	}
 }
 
+func TestSortBySize(t *testing.T) {
+	cases := []struct {
+		input, expected string
+	}{
+		{
+			input:    "price,prices,longlongname",
+			expected: "longlongname,prices,price",
+		},
+	}
+	for _, tc := range cases {
+		slice := strings.Split(tc.input, ",")
+		result := sortBySize(slice)
+		if tc.expected != strings.Join(result, ",") {
+			t.Errorf("expected:%s but got instead:%s", tc.expected, strings.Join(result, ","))
+		}
+	}
+}
+
 func TestEval(t *testing.T) {
 	t.Skip()
 	type tcase struct {

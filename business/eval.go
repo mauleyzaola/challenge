@@ -2,6 +2,7 @@ package business
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -43,6 +44,11 @@ func operator(value uint8) (int, error) {
 	}
 
 	return -1, fmt.Errorf("unsupported operator:%s", value)
+}
+
+func sortBySize(constants StringConstants) StringConstants {
+	sort.Sort(constants)
+	return constants
 }
 
 // TODO implement constants as well
