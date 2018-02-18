@@ -79,6 +79,14 @@ func TestInfixToPostfix(t *testing.T) {
 			error:    false,
 		},
 		{
+			input:    "3+fortyFour*2/(1-5)",
+			expected: "3,44.000000,2,*,1,5,-,/,+",
+			error:    false,
+			constants: map[string]float64{
+				"fortyFour": 44,
+			},
+		},
+		{
 			input:    "3+44.88*22.01/(1-0.005)",
 			expected: "3,44.88,22.01,*,1,0.005,-,/,+",
 			error:    false,
@@ -159,9 +167,14 @@ func TestCalc(t *testing.T) {
 			error:    false,
 		},
 		{
-			input:    "4/(10/5)+100-22",
+			input:    "4/(ten/ten5)+hundred-22",
 			expected: 80,
-			error:    false,
+			constants: map[string]float64{
+				"ten":     10,
+				"hundred": 100,
+				"ten5":    5,
+			},
+			error: false,
 		},
 		{
 			input:    "20*.95",

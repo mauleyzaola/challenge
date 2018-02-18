@@ -69,6 +69,11 @@ func infixToPostfix(expr string, constants map[string]float64) ([]string, error)
 	mainStack := newStringStack()
 	auxStack := newStringStack()
 
+	constants = sortConstants(constants)
+	for k, v := range constants {
+		expr = strings.Replace(expr, k, formatFloat(v), -1)
+	}
+
 	for i := 0; i < len(expr); i++ {
 		curr = expr[i]
 
