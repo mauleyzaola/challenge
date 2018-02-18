@@ -4,11 +4,11 @@ import "testing"
 
 func TestStringStack_Len(t *testing.T) {
 	stack := newStringStack()
-	stack.Push("1")
-	stack.Push("20")
-	stack.Push("300")
+	stack.push("1")
+	stack.push("20")
+	stack.push("300")
 	expected := 3
-	result := stack.Len()
+	result := stack.len()
 	if expected != result {
 		t.Errorf("expected:%s but got instead:%s", expected, result)
 	}
@@ -16,10 +16,10 @@ func TestStringStack_Len(t *testing.T) {
 
 func TestStringStack_Pop(t *testing.T) {
 	stack := newStringStack()
-	stack.Push("1")
-	stack.Push("20")
+	stack.push("1")
+	stack.push("20")
 	expected := "20"
-	result, err := stack.Pop()
+	result, err := stack.pop()
 	if err != nil {
 		t.Error(err)
 	}
@@ -28,7 +28,7 @@ func TestStringStack_Pop(t *testing.T) {
 	}
 
 	expected = "1"
-	result, err = stack.Pop()
+	result, err = stack.pop()
 	if err != nil {
 		t.Error(err)
 	}
@@ -37,7 +37,7 @@ func TestStringStack_Pop(t *testing.T) {
 	}
 
 	expected = ""
-	result, err = stack.Pop()
+	result, err = stack.pop()
 	if err == nil {
 		t.Error("expected error but got nil instead")
 	}
@@ -48,18 +48,18 @@ func TestStringStack_Pop(t *testing.T) {
 
 func TestStringStack_Top(t *testing.T) {
 	stack := newStringStack()
-	stack.Push("1")
-	stack.Push("20")
+	stack.push("1")
+	stack.push("20")
 
 	expected := "20"
-	result := stack.Top()
+	result := stack.top()
 	if expected != result {
 		t.Errorf("expected:%s but got instead:%s", expected, result)
 	}
 
-	stack.Pop()
+	stack.pop()
 	expected = "1"
-	result = stack.Top()
+	result = stack.top()
 	if expected != result {
 		t.Errorf("expected:%s but got instead:%s", expected, result)
 	}

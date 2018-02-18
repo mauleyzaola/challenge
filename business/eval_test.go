@@ -1,6 +1,7 @@
 package business
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -60,7 +61,7 @@ func TestOpOrder(t *testing.T) {
 	}
 }
 
-func TestToPostfix(t *testing.T) {
+func TestInfixToPostfix(t *testing.T) {
 	cases := []struct {
 		input, expected string
 		error           bool
@@ -94,12 +95,50 @@ func TestToPostfix(t *testing.T) {
 	for _, tc := range cases {
 		result, err := infixToPostfix(tc.input)
 		if tc.error {
-
+			if err == nil {
+				t.Errorf("expected error but got nil with input:%s", tc.input)
+			}
 		} else {
 			if err != nil {
 				t.Error(err)
-			} else if tc.expected != result {
+			} else if tc.expected != strings.Join(result.slice(), ",") {
 				t.Errorf("expected:%s but got instead:%s", tc.expected, result)
+			}
+		}
+	}
+}
+
+func TestPostfixCalculator(t *testing.T) {
+	cases := []struct {
+		input    string
+		expected float64
+		error    bool
+	}{
+		{
+			input:    "3,4,2,*,1,5,-,/,+",
+			expected: 1,
+			error:    false,
+		},
+		{
+			input:    "3,44,2,*,1,5,-,/,+",
+			expected: -19,
+			error:    false,
+		},
+	}
+
+	for _, tc := range cases {
+		result, err := postfixCalculator(strings.Split(tc.input, ","))
+		if tc.error {
+			if err == nil {
+				t.Errorf("expected error but got nil with input:%s", tc.input)
+			}
+		} else {
+			if err != nil {
+				t.Error(err)
+				continue
+			}
+			if tc.expected != result {
+				t.Errorf("expected:%v but got instead:%v", tc.expected, result)
 			}
 		}
 	}

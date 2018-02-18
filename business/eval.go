@@ -3,6 +3,7 @@ package business
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -45,66 +46,64 @@ func operator(value uint8) (int, error) {
 }
 
 // TODO implement constants as well
-func infixToPostfix(s string) (string, error) {
-	var (
-		curr uint8
-	)
+func infixToPostfix(value string) (*stringStack, error) {
+	var curr uint8
 	mainStack := newStringStack()
 	auxStack := newStringStack()
 
-	for i := 0; i < len(s); i++ {
-		curr = s[i]
+	for i := 0; i < len(value); i++ {
+		curr = value[i]
 
 		if isParenthesis(curr) {
 			if curr == '(' {
-				auxStack.Push(string(curr))
+				auxStack.push(string(curr))
 			} else { // closing parenthesis
-				for auxStack.Len() != 0 {
-					oldVal, _ := auxStack.Pop()
-					if oldVal == "(" {
+				for auxStack.len() != 0 {
+					last, _ := auxStack.pop()
+					if last == "(" {
 						continue
 					}
-					if oldVal == ")" {
+					if last == ")" {
 						break
 					}
-					mainStack.Push(oldVal)
+					mainStack.push(last)
 				}
 			}
 		} else if isOperator(curr) {
-			if auxStack.Len() != 0 {
-				if operatorOrder(string(curr)) > operatorOrder(auxStack.Top()) {
-					auxStack.Push(string(curr))
+			if auxStack.len() != 0 {
+				if operatorOrder(string(curr)) > operatorOrder(auxStack.top()) {
+					auxStack.push(string(curr))
 				} else {
-					oldVal, _ := auxStack.Pop()
-					mainStack.Push(oldVal)
-					auxStack.Push(string(curr))
+					last, _ := auxStack.pop()
+					mainStack.push(last)
+					auxStack.push(string(curr))
 				}
 			} else {
-				auxStack.Push(string(curr))
+				auxStack.push(string(curr))
 			}
 		} else if isNumber(curr) {
 			// we need to consider numbers with more than one digit
 			number := ""
-			for j := i; j < len(s) && isNumber(s[j]); j++ {
-				number += string(s[j])
+			for j := i; j < len(value) && isNumber(value[j]); j++ {
+				number += string(value[j])
 			}
 			// validate if the number can be parsed as float (cases like invalid decimal points for instance)
 			if _, err := strconv.ParseFloat(number, 64); err != nil {
-				return "", fmt.Errorf("invalid number:%s. %s", number, err)
+				return nil, fmt.Errorf("invalid number:%value. %value", number, err)
 			}
-			mainStack.Push(number)
+			mainStack.push(number)
 			i += len(number) - 1
 		} else {
-			return "", fmt.Errorf("not a valid number, operator or parenthesis:%s", string(curr))
+			return nil, fmt.Errorf("not a valid number, operator or parenthesis:%value", string(curr))
 		}
 	}
 
-	for auxStack.Len() != 0 {
-		lastOp, _ := auxStack.Pop()
-		mainStack.Push(lastOp)
+	for auxStack.len() != 0 {
+		last, _ := auxStack.pop()
+		mainStack.push(last)
 	}
 
-	return mainStack.Split(), nil
+	return mainStack, nil
 }
 
 func operatorOrder(op string) int {
@@ -120,4 +119,68 @@ func operatorOrder(op string) int {
 	default:
 		return 0
 	}
+}
+
+func postfixCalculator(values []string) (float64, error) {
+	mainStack := newStringStack()
+
+	doCalc := func(op string) error {
+		var result float64
+		val, err := mainStack.pop()
+		if err != nil {
+			return err
+		}
+		number2, err := strconv.ParseFloat(val, 64)
+		if err != nil {
+			return err
+		}
+		val, err = mainStack.pop()
+		if err != nil {
+			return err
+		}
+		number1, err := strconv.ParseFloat(val, 64)
+		if err != nil {
+			return err
+		}
+		o, err := operator(op[0])
+		if err != nil {
+			return err
+		}
+		switch o {
+		case op_add:
+			result = number1 + number2
+		case op_subs:
+			result = number1 - number2
+		case op_mul:
+			result = number1 * number2
+		case op_div:
+			if number2 == 0 {
+				return fmt.Errorf("division by zero not supported")
+			}
+			result = number1 / number2
+		}
+		mainStack.push(formatFloat(result))
+		return nil
+	}
+
+	// at this point we assume there are only numbers and operators
+	for _, v := range values {
+		if !isOperator(v[0]) {
+			mainStack.push(v)
+			continue
+		}
+		if err := doCalc(v); err != nil {
+			return 0, err
+		}
+	}
+
+	if mainStack.len() != 1 {
+		return 0, fmt.Errorf("invalid postfix expression:%s", strings.Join(values, ""))
+	}
+
+	return strconv.ParseFloat(mainStack.slice()[0], 64)
+}
+
+func formatFloat(number float64) string {
+	return strconv.FormatFloat(number, 'f', 2, 64)
 }
