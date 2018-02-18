@@ -30,7 +30,7 @@ func eval(expr string, constants map[string]float64) (float64, error) {
 }
 
 func isOperator(value uint8) bool {
-	_, err := operator(value)
+	_, err := parseOperator(value)
 	return err == nil
 }
 
@@ -38,12 +38,12 @@ func isParenthesis(value uint8) bool {
 	return value == '(' || value == ')'
 }
 
-func operator(value uint8) (int, error) {
+func parseOperator(value uint8) (int, error) {
 	if val, ok := ops[string(value)]; ok {
 		return val, nil
 	}
 
-	return -1, fmt.Errorf("unsupported operator:%s", string(value))
+	return -1, fmt.Errorf("unsupported parseOperator:%s", string(value))
 }
 
 func sortBySize(constants StringConstants) StringConstants {
@@ -51,14 +51,26 @@ func sortBySize(constants StringConstants) StringConstants {
 	return constants
 }
 
-// TODO implement constants as well
-func infixToPostfix(value string) ([]string, error) {
+func sortConstants(constants map[string]float64) map[string]float64 {
+	var slice []string
+	for k := range constants {
+		slice = append(slice, k)
+	}
+	slice = sortBySize(slice)
+	result := make(map[string]float64, len(slice))
+	for _, v := range slice {
+		result[v] = constants[v]
+	}
+	return result
+}
+
+func infixToPostfix(expr string, constants map[string]float64) ([]string, error) {
 	var curr uint8
 	mainStack := newStringStack()
 	auxStack := newStringStack()
 
-	for i := 0; i < len(value); i++ {
-		curr = value[i]
+	for i := 0; i < len(expr); i++ {
+		curr = expr[i]
 
 		if isParenthesis(curr) {
 			if curr == '(' {
@@ -90,8 +102,8 @@ func infixToPostfix(value string) ([]string, error) {
 		} else if isNumber(curr) {
 			// we need to consider numbers with more than one digit
 			number := ""
-			for j := i; j < len(value) && isNumber(value[j]); j++ {
-				number += string(value[j])
+			for j := i; j < len(expr) && isNumber(expr[j]); j++ {
+				number += string(expr[j])
 			}
 			// validate if the number can be parsed as float (cases like invalid decimal points for instance)
 			if _, err := strconv.ParseFloat(number, 64); err != nil {
@@ -100,7 +112,7 @@ func infixToPostfix(value string) ([]string, error) {
 			mainStack.push(number)
 			i += len(number) - 1
 		} else {
-			return nil, fmt.Errorf("not a valid number, operator or parenthesis:%value", string(curr))
+			return nil, fmt.Errorf("not a valid number, parseOperator or parenthesis:%value", string(curr))
 		}
 	}
 
@@ -148,7 +160,7 @@ func postfixCalculator(values []string) (float64, error) {
 		if err != nil {
 			return err
 		}
-		o, err := operator(op[0])
+		o, err := parseOperator(op[0])
 		if err != nil {
 			return err
 		}
@@ -188,5 +200,5 @@ func postfixCalculator(values []string) (float64, error) {
 }
 
 func formatFloat(number float64) string {
-	return strconv.FormatFloat(number, 'f', 2, 64)
+	return strconv.FormatFloat(number, 'f', 6, 64)
 }

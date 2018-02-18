@@ -1,6 +1,7 @@
 package business
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -65,6 +66,7 @@ func TestInfixToPostfix(t *testing.T) {
 	cases := []struct {
 		input, expected string
 		error           bool
+		constants       map[string]float64
 	}{
 		{
 			input:    "3+4*2/(1-5)",
@@ -93,7 +95,7 @@ func TestInfixToPostfix(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		result, err := infixToPostfix(tc.input)
+		result, err := infixToPostfix(tc.input, tc.constants)
 		if tc.error {
 			if err == nil {
 				t.Errorf("expected error but got nil with input:%s", tc.input)
@@ -146,9 +148,10 @@ func TestPostfixCalculator(t *testing.T) {
 
 func TestCalc(t *testing.T) {
 	cases := []struct {
-		input    string
-		expected float64
-		error    bool
+		input     string
+		expected  float64
+		error     bool
+		constants map[string]float64
 	}{
 		{
 			input:    "8+2*5",
@@ -177,7 +180,7 @@ func TestCalc(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		values, err := infixToPostfix(tc.input)
+		values, err := infixToPostfix(tc.input, tc.constants)
 		if !tc.error && err != nil {
 			t.Errorf("expected error to be nil but got instead:%s with input:%s", err, tc.input)
 			continue
@@ -213,6 +216,31 @@ func TestSortBySize(t *testing.T) {
 		result := sortBySize(slice)
 		if tc.expected != strings.Join(result, ",") {
 			t.Errorf("expected:%s but got instead:%s", tc.expected, strings.Join(result, ","))
+		}
+	}
+}
+
+func TestSortConstants(t *testing.T) {
+	cases := []struct {
+		input, expected map[string]float64
+	}{
+		{
+			input: map[string]float64{
+				"price":     5,
+				"lastPrice": 18.55,
+				"x":         22,
+			},
+			expected: map[string]float64{
+				"lastPrice": 18.55,
+				"price":     5,
+				"x":         22,
+			},
+		},
+	}
+	for _, tc := range cases {
+		result := sortConstants(tc.input)
+		if !reflect.DeepEqual(tc.expected, result) {
+			t.Errorf("expected:%#v but got instead:%#v", tc.expected, result)
 		}
 	}
 }
