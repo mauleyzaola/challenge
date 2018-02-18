@@ -3,6 +3,8 @@ package domain
 import (
 	"encoding/json"
 	"reflect"
+	"sort"
+	"strings"
 	"testing"
 )
 
@@ -126,6 +128,78 @@ func TestProducts_ToMap(t *testing.T) {
 		m2 := marshal(result)
 		if m1 != m2 {
 			t.Errorf("expected:\n%s\n but got instead:\n%s\n", m1, m2)
+		}
+	}
+}
+
+func TestProducts_ToItems(t *testing.T) {
+	voucher := &Product{
+		Code: "VOUCHER",
+	}
+	tshirt := &Product{
+		Code: "TSHIRT",
+	}
+	mug := &Product{
+		Code: "MUG",
+	}
+	products := Products{*voucher, *tshirt, *mug}
+
+	cases := []struct {
+		products Products
+		codes    string
+		expected BasketItems
+		error    bool
+	}{
+		{
+			products: products,
+			codes:    "VOUCHER,TSHIRT,MUG",
+			expected: BasketItems{
+				{Product: mug, Quantity: 1},
+				{Product: tshirt, Quantity: 1},
+				{Product: voucher, Quantity: 1},
+			},
+			error: false,
+		},
+		{
+			products: products,
+			codes:    "VOUCHER,TSHIRT,VOUCHER",
+			expected: BasketItems{
+				{Product: voucher, Quantity: 2},
+				{Product: tshirt, Quantity: 1},
+			},
+			error: false,
+		},
+		{
+			products: products,
+			codes:    "TSHIRT,TSHIRT,TSHIRT,VOUCHER,TSHIRT",
+			expected: BasketItems{
+				{Product: voucher, Quantity: 1},
+				{Product: tshirt, Quantity: 4},
+			},
+			error: false,
+		},
+	}
+	marshal := func(values []BasketItem) string {
+		data, _ := json.Marshal(&values)
+		return string(data)
+	}
+	for _, tc := range cases {
+		result, err := tc.products.ToItems(strings.Split(tc.codes, ","))
+		if tc.error {
+			if err == nil {
+				t.Errorf("expected error but got nil instead with products:%#v", tc.products)
+			}
+			continue
+		}
+		if err != nil {
+			t.Error("unexpected error:", err)
+			continue
+		}
+		// avoid the slice to change its order when marshaling so we can compare correctly
+		sort.Sort(tc.expected)
+		sort.Sort(result)
+		if marshal(tc.expected) != marshal(result) {
+			t.Errorf("expected:\n%#v\nbut got instead:\n%#v\n", marshal(tc.expected), marshal(result))
 		}
 	}
 }

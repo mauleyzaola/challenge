@@ -49,7 +49,7 @@ func TestBasketAmount(t *testing.T) {
 			continue
 		}
 		if err != nil {
-			t.Error(err)
+			t.Error("unexpected error:", err)
 			continue
 		}
 		if result != tc.expected {
