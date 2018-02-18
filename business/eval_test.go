@@ -70,6 +70,26 @@ func TestToPostfix(t *testing.T) {
 			expected: "3,4,2,*,1,5,-,/,+",
 			error:    false,
 		},
+		{
+			input:    "3+44*2/(1-5)",
+			expected: "3,44,2,*,1,5,-,/,+",
+			error:    false,
+		},
+		{
+			input:    "3+44.88*22.01/(1-0.005)",
+			expected: "3,44.88,22.01,*,1,0.005,-,/,+",
+			error:    false,
+		},
+		{
+			input:    "3+44.88*22.01/(1-0..005)",
+			expected: "",
+			error:    true,
+		},
+		{
+			input:    "33lalala",
+			expected: "",
+			error:    true,
+		},
 	}
 	for _, tc := range cases {
 		result, err := infixToPostfix(tc.input)

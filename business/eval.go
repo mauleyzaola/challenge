@@ -2,6 +2,7 @@ package business
 
 import (
 	"fmt"
+	"strconv"
 )
 
 const (
@@ -19,10 +20,9 @@ var ops map[string]int = map[string]int{
 }
 
 func isNumber(value uint8) bool {
-	return value >= '0' && value <= '9'
+	return (value >= '0' && value <= '9') || value == '.'
 }
 
-// Many features are missing on this basic eval function, for instance operator precedence, grouping and making use of external functions is not implemented yet
 func eval(expr string, constants map[string]float64) (float64, error) {
 	return -1, fmt.Errorf("not implemented yet")
 }
@@ -44,6 +44,7 @@ func operator(value uint8) (int, error) {
 	return -1, fmt.Errorf("unsupported operator:%s", value)
 }
 
+// TODO implement constants as well
 func infixToPostfix(s string) (string, error) {
 	var (
 		curr uint8
@@ -51,7 +52,7 @@ func infixToPostfix(s string) (string, error) {
 	mainStack := newStringStack()
 	auxStack := newStringStack()
 
-	for i := range s {
+	for i := 0; i < len(s); i++ {
 		curr = s[i]
 
 		if isParenthesis(curr) {
@@ -69,9 +70,7 @@ func infixToPostfix(s string) (string, error) {
 					mainStack.Push(oldVal)
 				}
 			}
-		}
-
-		if isOperator(curr) {
+		} else if isOperator(curr) {
 			if auxStack.Len() != 0 {
 				if operatorOrder(string(curr)) > operatorOrder(auxStack.Top()) {
 					auxStack.Push(string(curr))
@@ -83,11 +82,20 @@ func infixToPostfix(s string) (string, error) {
 			} else {
 				auxStack.Push(string(curr))
 			}
-		}
-
-		// TODO consider numbers with more than one digit
-		if isNumber(curr) {
-			mainStack.Push(string(curr))
+		} else if isNumber(curr) {
+			// we need to consider numbers with more than one digit
+			number := ""
+			for j := i; j < len(s) && isNumber(s[j]); j++ {
+				number += string(s[j])
+			}
+			// validate if the number can be parsed as float (cases like invalid decimal points for instance)
+			if _, err := strconv.ParseFloat(number, 64); err != nil {
+				return "", fmt.Errorf("invalid number:%s. %s", number, err)
+			}
+			mainStack.Push(number)
+			i += len(number) - 1
+		} else {
+			return "", fmt.Errorf("not a valid number, operator or parenthesis:%s", string(curr))
 		}
 	}
 
