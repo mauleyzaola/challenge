@@ -74,7 +74,7 @@ func infixToPostfix(s string) (string, error) {
 			if auxStack.Len() != 0 {
 				if operatorOrder(string(curr)) > operatorOrder(auxStack.Top()) {
 					auxStack.Push(string(curr))
-				} else if operatorOrder(string(curr)) == operatorOrder(auxStack.Top()) {
+				} else {
 					oldVal, _ := auxStack.Pop()
 					mainStack.Push(oldVal)
 					auxStack.Push(string(curr))
