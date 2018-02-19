@@ -69,7 +69,7 @@ func TestBasketAmount(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		result, err := BasketAmount(strings.Split(tc.codes, ","), tc.products, tc.rules)
+		items, err := BasketAddCode(strings.Split(tc.codes, ","), tc.products)
 		if tc.error {
 			if err == nil {
 				t.Errorf("expected error but got instead nil with test case:%d", i+1)
@@ -80,6 +80,7 @@ func TestBasketAmount(t *testing.T) {
 			t.Error("unexpected error:", err)
 			continue
 		}
+		result, err := BasketAmount(items, tc.rules)
 		if result != tc.expected {
 			t.Errorf("expected:%v but got instead:%v", tc.expected, result)
 		}
