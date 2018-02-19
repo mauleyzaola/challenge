@@ -1,9 +1,8 @@
 package business
 
 import (
-	"testing"
-
 	"strings"
+	"testing"
 
 	"github.com/mauleyzaola/challenge/domain"
 )
@@ -32,20 +31,20 @@ func TestBasketAmount(t *testing.T) {
 		expected float64
 		error    bool
 	}{
-		//{
-		//	rules:    domain.MockedRules,
-		//	products: products,
-		//	codes:    "VOUCHER,TSHIRT,MUG",
-		//	expected: 32.5,
-		//	error:    false,
-		//},
-		//{
-		//	rules:    domain.MockedRules,
-		//	products: products,
-		//	codes:    "VOUCHER,TSHIRT,VOUCHER",
-		//	expected: 25,
-		//	error:    false,
-		//},
+		{
+			rules:    domain.MockedRules,
+			products: products,
+			codes:    "VOUCHER,TSHIRT,MUG",
+			expected: 32.5,
+			error:    false,
+		},
+		{
+			rules:    domain.MockedRules,
+			products: products,
+			codes:    "VOUCHER,TSHIRT,VOUCHER",
+			expected: 25,
+			error:    false,
+		},
 		{
 			rules:    domain.MockedRules,
 			products: products,
@@ -53,13 +52,20 @@ func TestBasketAmount(t *testing.T) {
 			expected: 81,
 			error:    false,
 		},
-		//{
-		//	rules:    domain.MockedRules,
-		//	products: products,
-		//	codes:    "VOUCHER,TSHIRT,VOUCHER,VOUCHER,MUG,TSHIRT,TSHIRT",
-		//	expected: 74.5,
-		//	error:    false,
-		//},
+		{
+			rules:    domain.MockedRules,
+			products: products,
+			codes:    "VOUCHER,TSHIRT,VOUCHER,VOUCHER,MUG,TSHIRT,TSHIRT",
+			expected: 74.5,
+			error:    false,
+		},
+		{
+			rules:    domain.MockedRules,
+			products: products,
+			codes:    "SHA-LALALA",
+			expected: 0,
+			error:    true,
+		},
 	}
 
 	for i, tc := range cases {

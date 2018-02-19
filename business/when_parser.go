@@ -47,34 +47,17 @@ func WhenParser(whenExpr, priceExpr string) (domain.WhenCallback, error) {
 }
 
 func whenEach(number int, priceExpr string) domain.WhenCallback {
-	return func(products domain.Products) (float64, error) {
-		var (
-			err           error
-			price, result float64
-			items         domain.BasketItems
-		)
+	return func(item *domain.BasketItem) (float64, error) {
+		constants := make(map[string]float64)
+		constants["price"] = item.Product.Price
+		matches := float64(item.Quantity / number)
+		noMatches := float64(item.Quantity) - matches
 
-		items = items.ToItems(products)
-
-		prMap, err := products.ToMap()
+		eval, err := eval(priceExpr, constants)
 		if err != nil {
 			return 0, err
 		}
-		counters := items.CountProducts()
-		constants := make(map[string]float64)
-		for code, count := range counters {
-			price = prMap[code].Price
-			constants["price"] = price
-			matches := float64(count / number)
-			noMatches := float64(count) - matches
-
-			eval, err := Eval(priceExpr, constants)
-			if err != nil {
-				return 0, err
-			}
-			result += (eval * matches) + (price * noMatches)
-		}
-		return result, nil
+		return (eval * matches) + (item.Product.Price * noMatches), nil
 	}
 }
 
@@ -87,47 +70,28 @@ func whenTotalCounter(number int, expr, priceExpr string) (domain.WhenCallback, 
 	default:
 		return nil, fmt.Errorf("unsupported expression:%s", expr)
 	}
-	return func(products domain.Products) (float64, error) {
-		var (
-			err           error
-			price, result float64
-			items         domain.BasketItems
-		)
-
-		items = items.ToItems(products)
-
-		prMap, err := products.ToMap()
-		if err != nil {
-			return 0, err
-		}
-
-		counters := items.CountProducts()
+	return func(item *domain.BasketItem) (float64, error) {
 		constants := make(map[string]float64)
-		for code, count := range counters {
-			matches := false
-			switch expr {
-			case "gt":
-				matches = count > number
-			case "gte":
-				matches = count >= number
-			case "lt":
-				matches = count < number
-			case "lte":
-				matches = count <= number
-			}
-			price = prMap[code].Price
-			if matches {
-				constants["price"] = price
-				eval, err := Eval(priceExpr, constants)
-				if err != nil {
-					return 0, err
-				}
-				result += eval * float64(count)
-			} else {
-				result += price * float64(count)
-			}
+		matches := false
+		switch expr {
+		case "gt":
+			matches = item.Quantity > number
+		case "gte":
+			matches = item.Quantity >= number
+		case "lt":
+			matches = item.Quantity < number
+		case "lte":
+			matches = item.Quantity <= number
 		}
-
-		return result, nil
+		if matches {
+			constants["price"] = item.Product.Price
+			eval, err := eval(priceExpr, constants)
+			if err != nil {
+				return 0, err
+			}
+			return eval * float64(item.Quantity), nil
+		} else {
+			return item.Product.Price * float64(item.Quantity), nil
+		}
 	}, nil
 }

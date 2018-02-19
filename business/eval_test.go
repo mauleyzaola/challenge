@@ -302,7 +302,7 @@ func TestEval(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		result, err := Eval(tc.input, tc.constants)
+		result, err := eval(tc.input, tc.constants)
 		if tc.error {
 			if err == nil {
 				t.Errorf("expected error but got nil instad with whenExpr:%s", tc.input)
