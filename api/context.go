@@ -32,11 +32,11 @@ func newContext() *context {
 	return ctx
 }
 
-func (this *context) CreateBasket() (string, error) {
+func (this *context) createBasket() (string, error) {
 	return this.storage.Create()
 }
 
-func (this *context) ScanProduct(id string, codes []string) (domain.Products, error) {
+func (this *context) scanProduct(id string, codes []string) (domain.Products, error) {
 	basket, err := this.storage.Load(id)
 	if err != nil {
 		return nil, err
@@ -50,4 +50,17 @@ func (this *context) ScanProduct(id string, codes []string) (domain.Products, er
 		return nil, err
 	}
 	return items.DistinctProducts(), nil
+}
+
+func (this *context) totalAmount(id string) (*domain.Basket, float64, error) {
+	basket, err := this.storage.Load(id)
+	if err != nil {
+		return nil, 0, err
+	}
+	amount, err := business.BasketAmount(basket.Items, this.rules)
+	if err != nil {
+		return nil, 0, err
+	}
+	basket.Items = basket.Items.Group()
+	return basket, amount, nil
 }
