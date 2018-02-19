@@ -5,9 +5,6 @@ import (
 )
 
 type Storage interface {
-	Lock()
-	Unlock()
-
 	Init()
 
 	List() []string
