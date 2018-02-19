@@ -2,9 +2,8 @@ package storage
 
 import (
 	"fmt"
-	"sync"
-
 	"strconv"
+	"sync"
 
 	"github.com/mauleyzaola/challenge/domain"
 )
@@ -23,7 +22,7 @@ func (this *Memory) Init() {
 func (this *Memory) List() []string {
 	this.Lock()
 	defer this.Unlock()
-	results := make([]string, len(this.items))
+	var results []string
 	for k := range this.items {
 		results = append(results, k)
 	}
@@ -37,7 +36,10 @@ func (this *Memory) Load(id string) (*domain.Basket, error) {
 	if !ok {
 		return nil, fmt.Errorf("no matching id found:%s", id)
 	}
-	basket := val.(*domain.Basket)
+	basket, ok := val.(*domain.Basket)
+	if !ok {
+		return nil, fmt.Errorf("cannot cast to basket:%#v", basket)
+	}
 	return basket, nil
 }
 
@@ -48,7 +50,7 @@ func (this *Memory) Create() (string, error) {
 	// mocked id just for tests
 	this.nextId++
 	id := strconv.FormatInt(this.nextId, 10)
-	this.items[id] = &domain.BasketItems{}
+	this.items[id] = &domain.Basket{}
 	return id, nil
 }
 
