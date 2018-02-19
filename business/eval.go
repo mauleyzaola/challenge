@@ -47,7 +47,7 @@ func parseOperator(value uint8) (int, error) {
 		return val, nil
 	}
 
-	return -1, fmt.Errorf("unsupported parseOperator:%s", string(value))
+	return -1, fmt.Errorf("unsupported operator:%s", string(value))
 }
 
 func sortBySize(constants StringConstants) StringConstants {
@@ -116,12 +116,12 @@ func infixToPostfix(expr string, constants map[string]float64) ([]string, error)
 			}
 			// validate if the number can be parsed as float (cases like invalid decimal points for instance)
 			if _, err := strconv.ParseFloat(number, 64); err != nil {
-				return nil, fmt.Errorf("invalid number:%value. %value", number, err)
+				return nil, fmt.Errorf("invalid number:%v. %s", number, err)
 			}
 			mainStack.push(number)
 			i += len(number) - 1
 		} else {
-			return nil, fmt.Errorf("not a valid number, parseOperator or parenthesis:%value", string(curr))
+			return nil, fmt.Errorf("not a valid number, operator or parenthesis:%s", string(curr))
 		}
 	}
 
