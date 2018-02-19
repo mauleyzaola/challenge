@@ -2,5 +2,5 @@ package domain
 
 type BasketItem struct {
 	Product  *Product
-	Quantity float64
+	Quantity int
 }

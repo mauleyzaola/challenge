@@ -19,19 +19,6 @@ func (this Products) Filter(cb func(Product) bool) Products {
 	return result
 }
 
-func (this Products) MatchIndexes(indexes map[int]bool) Products {
-	if indexes == nil {
-		return this
-	}
-	var result []Product
-	for i, v := range this {
-		if _, ok := indexes[i]; ok {
-			result = append(result, v)
-		}
-	}
-	return result
-}
-
 func (this Products) ToMap() (map[string]*Product, error) {
 	result := make(map[string]*Product)
 	for i := range this {
@@ -47,29 +34,32 @@ func (this Products) ToMap() (map[string]*Product, error) {
 	return result, nil
 }
 
-func (this Products) ToItems(codes []string) (BasketItems, error) {
-	var result BasketItems
-	prCodes, err := this.ToMap()
-	if err != nil {
-		return nil, err
+func (this Products) ToProducts(codes []string) (Products, error) {
+	var result Products
+	keys := make(map[string]*Product)
+	for i := range this {
+		v := &this[i]
+		keys[v.Code] = v
 	}
-	counters := make(map[string]float64)
 	for _, code := range codes {
-		_, ok := prCodes[code]
+		product, ok := keys[code]
 		if !ok {
-			return nil, fmt.Errorf("code not found on products:%s", code)
+			return nil, fmt.Errorf("code not found:%s", code)
 		}
-		val, ok := counters[code]
+		result = append(result, *product)
+	}
+	return result, nil
+}
+
+func (this Products) Group() map[string]int {
+	result := make(map[string]int)
+	for _, v := range this {
+		val, ok := result[v.Code]
 		if !ok {
 			val = 0
 		}
 		val++
-		counters[code] = val
+		result[v.Code] = val
 	}
-	for k, v := range counters {
-		product := prCodes[k]
-		item := BasketItem{Product: product, Quantity: v}
-		result = append(result, item)
-	}
-	return result, nil
+	return result
 }

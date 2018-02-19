@@ -1,4 +1,4 @@
 package domain
 
-// Based on the content of a given slice of products, returns those positions of the slice which match some rule
-type WhenCallback func(products []Product) (matches map[int]bool)
+// Callback that processes a slice of products and returns the calculated price for each one
+type WhenCallback func(codes []string, products Products) (float64, error)

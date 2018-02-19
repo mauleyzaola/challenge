@@ -17,7 +17,7 @@ func TestIsNumber(t *testing.T) {
 	for _, tc := range cases {
 		result := isNumber(tc.input)
 		if result != tc.expected {
-			t.Errorf("expected:%v but got instead:%v input:%s", tc.expected, result, string(tc.input))
+			t.Errorf("expected:%v but got instead:%v whenExpr:%s", tc.expected, result, string(tc.input))
 		}
 	}
 }
@@ -37,7 +37,7 @@ func TestIsOperator(t *testing.T) {
 	for _, tc := range cases {
 		result := isOperator(tc.input)
 		if result != tc.expected {
-			t.Errorf("expected:%v but got instead:%v input:%s", tc.expected, result, string(tc.input))
+			t.Errorf("expected:%v but got instead:%v whenExpr:%s", tc.expected, result, string(tc.input))
 		}
 	}
 }
@@ -106,7 +106,7 @@ func TestInfixToPostfix(t *testing.T) {
 		result, err := infixToPostfix(tc.input, tc.constants)
 		if tc.error {
 			if err == nil {
-				t.Errorf("expected error but got nil with input:%s", tc.input)
+				t.Errorf("expected error but got nil with whenExpr:%s", tc.input)
 			}
 		} else {
 			if err != nil {
@@ -140,7 +140,7 @@ func TestPostfixCalculator(t *testing.T) {
 		result, err := postfixCalculator(strings.Split(tc.input, ","))
 		if tc.error {
 			if err == nil {
-				t.Errorf("expected error but got nil with input:%s", tc.input)
+				t.Errorf("expected error but got nil with whenExpr:%s", tc.input)
 			}
 		} else {
 			if err != nil {
@@ -195,22 +195,22 @@ func TestCalc(t *testing.T) {
 	for _, tc := range cases {
 		values, err := infixToPostfix(tc.input, tc.constants)
 		if !tc.error && err != nil {
-			t.Errorf("expected error to be nil but got instead:%s with input:%s", err, tc.input)
+			t.Errorf("expected error to be nil but got instead:%s with whenExpr:%s", err, tc.input)
 			continue
 		}
 		result, err := postfixCalculator(values)
 		if tc.error {
 			if err == nil {
-				t.Errorf("expected error but got nil instead with input:%s and postfix values:%s", tc.input, strings.Join(values, ","))
+				t.Errorf("expected error but got nil instead with whenExpr:%s and postfix values:%s", tc.input, strings.Join(values, ","))
 			}
 			continue
 		}
 		if err != nil {
-			t.Errorf("expected error to be nil but got instead:%s with input:%s", err, tc.input)
+			t.Errorf("expected error to be nil but got instead:%s with whenExpr:%s", err, tc.input)
 			continue
 		}
 		if result != tc.expected {
-			t.Errorf("expected:%v but got instead:%v with input:%s", tc.expected, result, tc.input)
+			t.Errorf("expected:%v but got instead:%v with whenExpr:%s", tc.expected, result, tc.input)
 		}
 	}
 }
@@ -305,7 +305,7 @@ func TestEval(t *testing.T) {
 		result, err := Eval(tc.input, tc.constants)
 		if tc.error {
 			if err == nil {
-				t.Errorf("expected error but got nil instad with input:%s", tc.input)
+				t.Errorf("expected error but got nil instad with whenExpr:%s", tc.input)
 			}
 		} else {
 			if err != nil {

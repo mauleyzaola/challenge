@@ -15,7 +15,7 @@ func TestBasketAmount(t *testing.T) {
 		Code:  "VOUCHER",
 		Price: 5,
 	}
-	tshirt := &domain.Product{
+	tShirt := &domain.Product{
 		Code:  "TSHIRT",
 		Price: 20,
 	}
@@ -24,38 +24,38 @@ func TestBasketAmount(t *testing.T) {
 		Price: 7.5,
 	}
 
-	products := []domain.Product{*voucher, *tshirt, *mug}
+	products := []domain.Product{*voucher, *tShirt, *mug}
 
 	cases := []struct {
-		rules    []domain.DiscountRule
+		rules    []domain.Rule
 		products []domain.Product
 		codes    string
 		expected float64
 		error    bool
 	}{
 		{
-			rules:    domain.MockedDiscountRules,
+			rules:    domain.MockedRules,
 			products: products,
 			codes:    "VOUCHER,TSHIRT,MUG",
 			expected: 32.5,
 			error:    false,
 		},
 		{
-			rules:    domain.MockedDiscountRules,
+			rules:    domain.MockedRules,
 			products: products,
 			codes:    "VOUCHER,TSHIRT,VOUCHER",
 			expected: 25,
 			error:    false,
 		},
 		{
-			rules:    domain.MockedDiscountRules,
+			rules:    domain.MockedRules,
 			products: products,
 			codes:    "TSHIRT,TSHIRT,TSHIRT,VOUCHER,TSHIRT",
 			expected: 81,
 			error:    false,
 		},
 		{
-			rules:    domain.MockedDiscountRules,
+			rules:    domain.MockedRules,
 			products: products,
 			codes:    "VOUCHER,TSHIRT,VOUCHER,VOUCHER,MUG,TSHIRT,TSHIRT",
 			expected: 74.5,
