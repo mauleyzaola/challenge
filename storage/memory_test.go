@@ -11,16 +11,16 @@ func TestMemoryOperations(t *testing.T) {
 	storage = &Memory{}
 	storage.Init()
 
-	id, err := storage.Create()
+	basket, err := storage.Create()
 	if err != nil {
 		t.Error("unexpected error:", err)
 	}
 
-	basket, err := storage.Load("xx")
+	_, err = storage.Load("xx")
 	if err == nil {
 		t.Error("expected error but got nil instead")
 	}
-	basket, err = storage.Load(id)
+	basket, err = storage.Load(basket.Id)
 	if err != nil {
 		t.Error(err)
 	}
@@ -33,7 +33,7 @@ func TestMemoryOperations(t *testing.T) {
 		t.Errorf("expected list of baskets to be:%d but got instead:%d", expected, len(list))
 	}
 
-	if err = storage.Remove(id); err != nil {
+	if err = storage.Remove(basket.Id); err != nil {
 		t.Error(err)
 	}
 

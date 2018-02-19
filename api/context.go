@@ -32,7 +32,7 @@ func newContext() *context {
 	return ctx
 }
 
-func (this *context) createBasket() (string, error) {
+func (this *context) createBasket() (*domain.Basket, error) {
 	return this.storage.Create()
 }
 
@@ -63,4 +63,8 @@ func (this *context) totalAmount(id string) (*domain.Basket, float64, error) {
 	}
 	basket.Items = basket.Items.Group()
 	return basket, amount, nil
+}
+
+func (this *context) removeBasket(id string) error {
+	return this.storage.Remove(id)
 }

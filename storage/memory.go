@@ -43,18 +43,19 @@ func (this *Memory) Load(id string) (*domain.Basket, error) {
 	return basket, nil
 }
 
-func (this *Memory) Create() (string, error) {
+func (this *Memory) Create() (*domain.Basket, error) {
 	this.Lock()
 	defer this.Unlock()
 
 	// mocked id just for tests
 	this.nextId++
 	id := strconv.FormatInt(this.nextId, 10)
-	this.items[id] = &domain.Basket{
+	basket := &domain.Basket{
 		Id:    id,
 		Items: []domain.BasketItem{},
 	}
-	return id, nil
+	this.items[id] = basket
+	return basket, nil
 }
 
 func (this *Memory) Save(basket *domain.Basket) error {

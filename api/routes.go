@@ -1,11 +1,9 @@
 package main
 
 import (
-	"net/http"
-
 	"encoding/json"
-
 	"fmt"
+	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -13,19 +11,16 @@ import (
 func setupRouter() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/basket", createBasket).Methods("POST")
-	r.HandleFunc("/scan", scanProduct).Methods("POST")
-	r.HandleFunc("/total/{id}", totalBasket).Methods("GET")
+	r.HandleFunc("/basket/{id}/scan", scanProduct).Methods("POST")
+	r.HandleFunc("/basket/{id}", totalBasket).Methods("GET")
+	r.HandleFunc("/basket/{id}", removeBasket).Methods("DELETE")
 	return r
 }
 
 func createBasket(w http.ResponseWriter, r *http.Request) {
 	createHeaders(w)
-	id, err := ctx.createBasket()
-	createResponse(w, &struct {
-		Id string `json:"Id"`
-	}{
-		id,
-	}, err)
+	basket, err := ctx.createBasket()
+	createResponse(w, basket, err)
 }
 
 func scanProduct(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +34,10 @@ func scanProduct(w http.ResponseWriter, r *http.Request) {
 		createResponse(w, nil, err)
 		return
 	}
+	if len(input.Id) == 0 {
+		input.Id = mux.Vars(r)["id"]
+	}
+
 	items, err := ctx.scanProduct(input.Id, input.Codes)
 	if err != nil {
 		createResponse(w, nil, err)
@@ -63,4 +62,14 @@ func totalBasket(w http.ResponseWriter, r *http.Request) {
 		amount,
 	}
 	createResponse(w, result, err)
+}
+
+func removeBasket(w http.ResponseWriter, r *http.Request) {
+	id, ok := mux.Vars(r)["id"]
+	if !ok {
+		createResponse(w, nil, fmt.Errorf("missing id in path, please use:/total/{id}"))
+		return
+	}
+	err := ctx.removeBasket(id)
+	createResponse(w, nil, err)
 }

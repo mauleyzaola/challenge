@@ -8,7 +8,7 @@ type Storage interface {
 	Init()
 
 	List() []string
-	Create() (string, error)
+	Create() (*domain.Basket, error)
 	Load(id string) (*domain.Basket, error)
 	Save(basket *domain.Basket) error
 	Remove(id string) error
