@@ -3,10 +3,12 @@ package business
 import (
 	"testing"
 
+	"strings"
+
 	"github.com/mauleyzaola/challenge/domain"
 )
 
-// TODO the product price should come from another domain entity
+// TODO the product price should come from another domain entity, for now we store it along with the product itself
 func TestBasketAmount(t *testing.T) {
 	t.Skip()
 	voucher := &domain.Product{
@@ -22,26 +24,47 @@ func TestBasketAmount(t *testing.T) {
 		Price: 7.5,
 	}
 
+	products := []domain.Product{*voucher, *tshirt, *mug}
+
 	cases := []struct {
 		rules    []domain.DiscountRule
-		items    []domain.BasketItem
+		products []domain.Product
+		codes    string
 		expected float64
 		error    bool
 	}{
 		{
-			rules: domain.MockedDiscountRules,
-			items: []domain.BasketItem{
-				{Product: voucher, Quantity: 1},
-				{Product: tshirt, Quantity: 1},
-				{Product: mug, Quantity: 1},
-			},
-			expected: 0,
+			rules:    domain.MockedDiscountRules,
+			products: products,
+			codes:    "VOUCHER,TSHIRT,MUG",
+			expected: 32.5,
+			error:    false,
+		},
+		{
+			rules:    domain.MockedDiscountRules,
+			products: products,
+			codes:    "VOUCHER,TSHIRT,VOUCHER",
+			expected: 25,
+			error:    false,
+		},
+		{
+			rules:    domain.MockedDiscountRules,
+			products: products,
+			codes:    "TSHIRT,TSHIRT,TSHIRT,VOUCHER,TSHIRT",
+			expected: 81,
+			error:    false,
+		},
+		{
+			rules:    domain.MockedDiscountRules,
+			products: products,
+			codes:    "VOUCHER,TSHIRT,VOUCHER,VOUCHER,MUG,TSHIRT,TSHIRT",
+			expected: 74.5,
 			error:    false,
 		},
 	}
 
 	for i, tc := range cases {
-		result, err := BasketAmount(tc.items, tc.rules)
+		result, err := BasketAmount(strings.Split(tc.codes, ","), tc.products, tc.rules)
 		if tc.error {
 			if err == nil {
 				t.Errorf("expected error but got instead nil with test case:%d", i+1)
