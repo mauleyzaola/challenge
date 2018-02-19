@@ -25,7 +25,7 @@ func isNumber(value uint8) bool {
 	return (value >= '0' && value <= '9') || value == '.'
 }
 
-func Eval(expr string, constants map[string]float64) (float64, error) {
+func eval(expr string, constants map[string]float64) (float64, error) {
 	values, err := infixToPostfix(expr, constants)
 	if err != nil {
 		return 0, err

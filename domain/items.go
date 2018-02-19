@@ -2,14 +2,15 @@ package domain
 
 type BasketItems []BasketItem
 
-func (this BasketItems) Len() int {
-	return len(this)
-}
-
-func (this BasketItems) Swap(i, j int) {
-	this[i], this[j] = this[j], this[i]
-}
-
-func (this BasketItems) Less(i, j int) bool {
-	return this[i].Product.Code < this[j].Product.Code
+func (this BasketItems) CountCodes(codes []string) map[string]int {
+	result := make(map[string]int)
+	for _, code := range codes {
+		val, ok := result[code]
+		if !ok {
+			val = 0
+		}
+		val++
+		result[code] = val
+	}
+	return result
 }

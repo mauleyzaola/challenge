@@ -1,6 +1,8 @@
 package operations
 
-import "github.com/mauleyzaola/challenge/domain"
+import (
+	"github.com/mauleyzaola/challenge/domain"
+)
 
 // TODO define lock and unlock methods
 type Storage interface {
