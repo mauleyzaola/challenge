@@ -1,4 +1,4 @@
 package domain
 
-// Callback that processes a slice of products and returns the calculated price for each one
+// Callback that processes a basket item and returns the calculated price
 type WhenCallback func(item *BasketItem) (float64, error)
