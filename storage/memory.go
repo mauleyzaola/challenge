@@ -50,7 +50,10 @@ func (this *Memory) Create() (string, error) {
 	// mocked id just for tests
 	this.nextId++
 	id := strconv.FormatInt(this.nextId, 10)
-	this.items[id] = &domain.Basket{}
+	this.items[id] = &domain.Basket{
+		Id:    id,
+		Items: []domain.BasketItem{},
+	}
 	return id, nil
 }
 
