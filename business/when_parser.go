@@ -47,17 +47,14 @@ func WhenParser(whenExpr, priceExpr string) (domain.WhenCallback, error) {
 }
 
 func whenEach(number int, priceExpr string) domain.WhenCallback {
-	return func(codes []string, products domain.Products) (float64, error) {
+	return func(products domain.Products) (float64, error) {
 		var (
 			err           error
 			price, result float64
 			items         domain.BasketItems
 		)
 
-		items, err = items.ToItems(codes, products)
-		if err != nil {
-			return 0, err
-		}
+		items = items.ToItems(products)
 
 		prMap, err := products.ToMap()
 		if err != nil {
@@ -90,17 +87,14 @@ func whenTotalCounter(number int, expr, priceExpr string) (domain.WhenCallback, 
 	default:
 		return nil, fmt.Errorf("unsupported expression:%s", expr)
 	}
-	return func(codes []string, products domain.Products) (float64, error) {
+	return func(products domain.Products) (float64, error) {
 		var (
 			err           error
 			price, result float64
 			items         domain.BasketItems
 		)
 
-		items, err = items.ToItems(codes, products)
-		if err != nil {
-			return 0, err
-		}
+		items = items.ToItems(products)
 
 		prMap, err := products.ToMap()
 		if err != nil {

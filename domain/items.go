@@ -1,7 +1,5 @@
 package domain
 
-import "fmt"
-
 type BasketItems []BasketItem
 
 func (this BasketItems) Len() int {
@@ -42,21 +40,12 @@ func (this BasketItems) CountProducts() map[string]int {
 	return result
 }
 
-func (this BasketItems) ToItems(codes []string, products Products) (BasketItems, error) {
-	prCodes, err := products.ToMap()
-	if err != nil {
-		return nil, err
-	}
+func (this BasketItems) ToItems(products Products) BasketItems {
 	var result BasketItems
-
-	for _, code := range codes {
-		product, ok := prCodes[code]
-		if !ok {
-			return nil, fmt.Errorf("code:%s was not found in provided products", code)
-		}
+	for i := range products {
+		product := &products[i]
 		item := BasketItem{Product: product, Quantity: 1}
 		result = append(result, item)
 	}
-
-	return result, nil
+	return result
 }

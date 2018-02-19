@@ -10,7 +10,6 @@ import (
 
 // TODO the product price should come from another domain entity, for now we store it along with the product itself
 func TestBasketAmount(t *testing.T) {
-	t.Skip()
 	voucher := &domain.Product{
 		Code:  "VOUCHER",
 		Price: 5,
@@ -33,20 +32,20 @@ func TestBasketAmount(t *testing.T) {
 		expected float64
 		error    bool
 	}{
-		{
-			rules:    domain.MockedRules,
-			products: products,
-			codes:    "VOUCHER,TSHIRT,MUG",
-			expected: 32.5,
-			error:    false,
-		},
-		{
-			rules:    domain.MockedRules,
-			products: products,
-			codes:    "VOUCHER,TSHIRT,VOUCHER",
-			expected: 25,
-			error:    false,
-		},
+		//{
+		//	rules:    domain.MockedRules,
+		//	products: products,
+		//	codes:    "VOUCHER,TSHIRT,MUG",
+		//	expected: 32.5,
+		//	error:    false,
+		//},
+		//{
+		//	rules:    domain.MockedRules,
+		//	products: products,
+		//	codes:    "VOUCHER,TSHIRT,VOUCHER",
+		//	expected: 25,
+		//	error:    false,
+		//},
 		{
 			rules:    domain.MockedRules,
 			products: products,
@@ -54,13 +53,13 @@ func TestBasketAmount(t *testing.T) {
 			expected: 81,
 			error:    false,
 		},
-		{
-			rules:    domain.MockedRules,
-			products: products,
-			codes:    "VOUCHER,TSHIRT,VOUCHER,VOUCHER,MUG,TSHIRT,TSHIRT",
-			expected: 74.5,
-			error:    false,
-		},
+		//{
+		//	rules:    domain.MockedRules,
+		//	products: products,
+		//	codes:    "VOUCHER,TSHIRT,VOUCHER,VOUCHER,MUG,TSHIRT,TSHIRT",
+		//	expected: 74.5,
+		//	error:    false,
+		//},
 	}
 
 	for i, tc := range cases {
