@@ -3,13 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-
 	"os"
 
 	"github.com/mauleyzaola/challenge/domain"
 )
 
 var commands map[string]callback = map[string]callback{
+	"help":   help,
 	"quit":   quit,
 	"use":    useBasket,
 	"create": createBasket,

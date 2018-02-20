@@ -16,6 +16,7 @@ func init() {
 }
 
 func main() {
+	help()
 	for {
 		readText()
 	}
