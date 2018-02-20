@@ -14,7 +14,17 @@ func setupRouter() *mux.Router {
 	r.HandleFunc("/basket/{id}/scan", scanProduct).Methods("POST")
 	r.HandleFunc("/basket/{id}", totalBasket).Methods("GET")
 	r.HandleFunc("/basket/{id}", removeBasket).Methods("DELETE")
+	r.HandleFunc("/ping", ping).Methods("GET")
 	return r
+}
+
+func ping(w http.ResponseWriter, r *http.Request) {
+	createHeaders(w)
+	createResponse(w, &struct {
+		Message string `json:"message"`
+	}{
+		"pong",
+	}, nil)
 }
 
 func createBasket(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +60,7 @@ func totalBasket(w http.ResponseWriter, r *http.Request) {
 	createHeaders(w)
 	id, ok := mux.Vars(r)["id"]
 	if !ok {
-		createResponse(w, nil, fmt.Errorf("missing id in path, please use:/total/{id}"))
+		createResponse(w, nil, fmt.Errorf("missing id in path, please use:/basket/{id}"))
 		return
 	}
 	basket, amount, err := ctx.totalAmount(id)
@@ -67,7 +77,7 @@ func totalBasket(w http.ResponseWriter, r *http.Request) {
 func removeBasket(w http.ResponseWriter, r *http.Request) {
 	id, ok := mux.Vars(r)["id"]
 	if !ok {
-		createResponse(w, nil, fmt.Errorf("missing id in path, please use:/total/{id}"))
+		createResponse(w, nil, fmt.Errorf("missing id in path, please use:/basket/{id}"))
 		return
 	}
 	err := ctx.removeBasket(id)
