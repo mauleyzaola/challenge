@@ -49,7 +49,12 @@ func scanProduct(params ...string) (interface{}, error) {
 		return nil, fmt.Errorf("there is no basket selected")
 	}
 	codes := append([]string{}, params...)
-	data, err := request("POST", fmt.Sprintf("/basket/%s/scan", activeBasket), &codes)
+	input := &struct {
+		Codes []string
+	}{
+		codes,
+	}
+	data, err := request("POST", fmt.Sprintf("/basket/%s/scan", activeBasket), input)
 	if err != nil {
 		return nil, err
 	}
@@ -77,12 +82,9 @@ func totalBasket(params ...string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	result := &struct {
-		Basket *domain.Basket
-		Amount float64
-	}{}
-	if err = json.Unmarshal(data, result); err != nil {
+	basket := &domain.Basket{}
+	if err = json.Unmarshal(data, basket); err != nil {
 		return nil, err
 	}
-	return result, nil
+	return basket, nil
 }

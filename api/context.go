@@ -52,17 +52,17 @@ func (this *context) scanProduct(id string, codes []string) (domain.Products, er
 	return items.DistinctProducts(), nil
 }
 
-func (this *context) totalAmount(id string) (*domain.Basket, float64, error) {
+func (this *context) totalAmount(id string) (*domain.Basket, error) {
 	basket, err := this.storage.Load(id)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
-	amount, err := business.BasketAmount(basket.Items, this.rules)
+	basket.Amount, err = business.BasketAmount(basket.Items, this.rules)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	basket.Items = basket.Items.Group()
-	return basket, amount, nil
+	return basket, nil
 }
 
 func (this *context) removeBasket(id string) error {

@@ -48,13 +48,21 @@ func request(method, endpoint string, message interface{}) ([]byte, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
-	if res.StatusCode != http.StatusOK {
-
-	}
-
 	data, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
+
+	if res.StatusCode != http.StatusOK {
+		message := &struct {
+			Error   bool
+			Message string
+		}{}
+		if err = json.Unmarshal(data, message); err != nil {
+			return nil, fmt.Errorf("bad request")
+		}
+		return nil, fmt.Errorf("response error:%s", message.Message)
+	}
+
 	return data, nil
 }

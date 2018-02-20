@@ -63,15 +63,8 @@ func totalBasket(w http.ResponseWriter, r *http.Request) {
 		createResponse(w, nil, fmt.Errorf("missing id in path, please use:/basket/{id}"))
 		return
 	}
-	basket, amount, err := ctx.totalAmount(id)
-	result := &struct {
-		Basket interface{} `json:"basket"`
-		Amount float64     `json:"amount"`
-	}{
-		basket,
-		amount,
-	}
-	createResponse(w, result, err)
+	basket, err := ctx.totalAmount(id)
+	createResponse(w, basket, err)
 }
 
 func removeBasket(w http.ResponseWriter, r *http.Request) {

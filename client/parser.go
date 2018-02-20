@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"strings"
+
+	"github.com/mauleyzaola/challenge/operations"
 )
 
 func parseCommand(input string) error {
@@ -15,6 +17,11 @@ func parseCommand(input string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("result:%#v\n", result)
+	if printer, ok := result.(operations.Printer); ok {
+		printer.Print()
+	} else {
+		fmt.Println(strings.Repeat("=", 40))
+	}
+
 	return nil
 }
