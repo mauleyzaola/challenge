@@ -17,3 +17,10 @@ func (this Products) ToMap() (map[string]*Product, error) {
 	}
 	return result, nil
 }
+
+func (this Products) Print() {
+	fmt.Printf("code\tname\tprice\n")
+	for _, v := range this {
+		fmt.Printf("%s\t%s\t%v\n", v.Code, v.Name, v.Price)
+	}
+}
